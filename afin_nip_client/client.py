@@ -33,13 +33,13 @@ class AfinClient:
         nip: str,
     ) -> bool:
         if len(nip) != 10:
-            raise NipLengthError
+            raise NipLengthError(nip)
 
         weights: tuple[int, ...] = (6, 5, 7, 2, 3, 4, 5, 6, 7)
         checksum: int = sum(w * int(d) for w, d in zip(weights, nip)) % 11
         if checksum != 10 and checksum == int(nip[9]):
             return True
-        raise NipChecksumError
+        raise NipChecksumError(nip)
 
     def _parse_response(
         self,
@@ -48,7 +48,7 @@ class AfinClient:
         text = text.strip()
 
         if not text:
-            raise EmptyResponse
+            raise EmptyResponse()
 
         if text.startswith("#"):
             message: str = text.lstrip("#").strip()
@@ -57,7 +57,7 @@ class AfinClient:
         fields: list[str] = [f.strip() for f in text.split(", ")]
 
         if len(fields) < 12:
-            raise InvalidResponse
+            raise InvalidResponse(len(fields))
 
         (
             regon,
@@ -113,7 +113,7 @@ class AfinClient:
             )
             response.raise_for_status()
         except requests.RequestException as e:
-            raise AfinApiError(e) from e
+            raise AfinApiError(str(e)) from e
 
         # The server returns only "Content-Type: text/plain"
         # without charset, so we need to enforce UTF-8 to
