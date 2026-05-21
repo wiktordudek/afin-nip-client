@@ -34,7 +34,7 @@ import json
 from afin_nip_client.client import AfinClient
 
 with AfinClient() as client:
-    info = client.get("000-00-00-000")  # this obbiously would fail, use your own NIP
+    info = client.get("000-00-00-000")  # this obviously would fail, use your own NIP
 
 print(json.dumps(info.to_dict()))
 ```
